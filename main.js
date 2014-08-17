@@ -3,29 +3,18 @@ function draw(){
 	if (canvas.getContext){
 	  var ctx = canvas.getContext('2d');
 	  var img = new Image();
-	  img.src = "images/zeldaoracleofages_link_sheet.png";
+	  img.src = "images/la_link.png";
 	  var posx = 200;
 	  var posy = 200;
 
-	  var sprite_arr = create_sprite_array(img, 29, 30);
-
 	  img.onload = function(){
-	  	sprite_arr[0].draw(ctx, 200, 200);
+	  	game = new Game(img, ctx);
+	  	game.run();
+		  // var sprite_arr = create_sprite_array(img, 32, 32);
+		  // sprite_arr[22].draw(ctx, 200, 200);
 	  };
 	}
 }
-
-function draw_sprite(ctx, img, posx, posy, i){
-	ctx.drawImage(img, (i%14)*29, (i/14)*30, 29, 30, posx, posy, 80, 120);
-}
-
-// function show_key(e){
-// 	var key = e.keyCode ? e.keyCode : e.which;
-
-// 	if (key == 38){
-// 		posx += 10;
-// 	}
-// }
 
 function create_sprite_array(img, sprite_width, sprite_height){
 	var lines = Math.floor(img.height / sprite_height);
@@ -75,9 +64,32 @@ function Sprite(img, xpos, ypos, width, height){
 	this.ypos = ypos;
 	this.width = width;
 	this.height = height;
-	this.scaling = 5;
+	this.scaling = 3;
 }
 
 Sprite.prototype.draw = function(ctx, dest_posx, dest_posy){
 	ctx.drawImage(this.img, this.xpos, this.ypos, this.width, this.height, dest_posx, dest_posy, this.scaling*this.width, this.scaling*this.height);
+};
+
+function Game(img, ctx){
+	this.fps = 60;
+	this.i = 10;
+	this.sprite_arr = create_sprite_array(img, 32, 32);
+	this.ctx = ctx;
+}
+
+Game.prototype.run = function(){
+	this.update();
+	this.draw();
+	window.requestAnimationFrame(this.run);
+	//requestAnimationFrame needs the function as argument, not the result of the function!!
+};
+
+Game.prototype.update = function(){
+	this.i += 1;
+};
+
+Game.prototype.draw = function(){
+	this.sprite_arr[this.i%this.sprite_arr.length].draw(this.ctx, 200,200);
+
 };
