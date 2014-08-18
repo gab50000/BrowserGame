@@ -10,7 +10,7 @@ function draw(){
 
 
 	  img.onload = function(){
-	  	var game = new Game(img, ctx);
+	  	var game = new Game(img, ctx, canvas.width, canvas.height);
    	    window.addEventListener('keydown',game.check_push.bind(game),false);
 	    window.addEventListener('keyup',game.check_release.bind(game),false);
 	  	// game.draw();
@@ -82,8 +82,10 @@ Sprite.prototype.draw = function(ctx, dest_posx, dest_posy){
 	ctx.drawImage(this.img, this.xpos, this.ypos, this.width, this.height, dest_posx, dest_posy, this.scaling*this.width, this.scaling*this.height);
 };
 
-function Game(img, ctx){
-	this.fps = 5;
+function Game(img, ctx, width, height){
+	this.canvas_width = width;
+	this.canvas_height = height;
+	this.fps = 60;
 	this.i = 0;
 	sprite_arr = create_sprite_array(img, 32, 32);
 	this.ctx = ctx;
@@ -127,7 +129,7 @@ Game.prototype.run = function(){
 };
 
 Game.prototype.update = function(){
-	console.log(this.buttons_pressed);
+	// console.log(this.buttons_pressed);
 
 	if (this.buttons_pressed["left"] == true){
 		this.link.move_left();
@@ -150,7 +152,8 @@ Game.prototype.draw = function(){
 	// 	this.i = 0;
 	// }
 	// console.log(sa[this.i].width);
-	this.ctx.clearRect(this.link.x, this.link.y, this.link.sprite_arr[0].width*this.link.sprite_arr[0].scaling, this.link.sprite_arr[0].height*this.link.sprite_arr[0].scaling);
+	// this.ctx.clearRect(this.link.x, this.link.y, this.link.sprite_arr[0].width*this.link.sprite_arr[0].scaling, this.link.sprite_arr[0].height*this.link.sprite_arr[0].scaling);
+	this.ctx.clearRect(0, 0, this.canvas_width, this.canvas_height);
 	this.link.draw(this.ctx);
 
 };
