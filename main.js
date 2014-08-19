@@ -39,33 +39,94 @@ function create_sprite_array(img, sprite_width, sprite_height){
 
 function Link(sprite_arr){
 	this.states = ["shield", "defending", "jumping", "swimming", "walking", "standing"]
-	self.facing = "down";
+	this.facing = "down";
 	this.x = 0;
 	this.y = 0;
 	this.sprite_arr = sprite_arr;
-	self.walking = false;
-	self.shield = false;
+	this.walking = false;
+	this.shield = true;
+	this.tact = true;
 }
 
 Link.prototype.draw = function(ctx) {
   // draw_sprite(ctx, this.img, this.x, this.y, 16);
-  this.sprite_arr[0].draw(ctx, this.x, this.y);
+  // this.sprite_arr[0].draw(ctx, this.x, this.y);
+  if (this.walking == true){
+  	this.draw_walking(ctx);
+  }
+
+
+};
+
+Link.prototype.draw_walking = function(ctx){
+	switch(this.facing){
+		case "up" :
+			console.log("up");
+			if (this.shield == true){
+				if (this.tact == true){
+					this.sprite_arr[37].draw(ctx, this.x, this.y);
+				}
+				else{
+					this.sprite_arr[38].draw(ctx, this.x, this.y);
+				}
+			} 
+			break;
+		case "right" : 
+			console.log("right");
+			if (this.shield == true){
+				if (this.tact == true){
+					this.sprite_arr[28].draw(ctx, this.x, this.y);
+				}
+				else{
+					this.sprite_arr[29].draw(ctx, this.x, this.y);
+				}
+			} 
+			break;
+		case "down" : 
+			console.log("down");
+			if (this.shield == true){
+				if (this.tact == true){
+					this.sprite_arr[4].draw(ctx, this.x, this.y);
+				}
+				else{
+					this.sprite_arr[5].draw(ctx, this.x, this.y);
+				}
+			} 
+			break;
+		case "left" : 
+			console.log("left");
+			if (this.shield == true){
+				if (this.tact == true){
+					this.sprite_arr[16].draw(ctx, this.x, this.y);
+				}
+				else{
+					this.sprite_arr[17].draw(ctx, this.x, this.y);
+				}
+			} 
+			break;
+
+	}
+
 };
 
 Link.prototype.move_left = function() {
-  this.x -= 10;
+  this.x -= 8;
+  this.tact = !this.tact;
 };
 
 Link.prototype.move_right = function() {
-  this.x += 10;
+  this.x += 8;
+  this.tact = !this.tact;
 };
 
 Link.prototype.move_up = function() {
-  this.y -= 10;
+  this.y -= 8;
+  this.tact = !this.tact;
 };
 
 Link.prototype.move_down = function() {
-  this.y += 10;
+  this.y += 8;
+  this.tact = !this.tact;
 };
 
 //constructor takes coordinate of upper left
@@ -75,7 +136,7 @@ function Sprite(img, xpos, ypos, width, height){
 	this.ypos = ypos; //ypos in ....
 	this.width = width;
 	this.height = height;
-	this.scaling = 2;
+	this.scaling = 1.3;
 }
 
 Sprite.prototype.draw = function(ctx, dest_posx, dest_posy){
@@ -133,16 +194,66 @@ Game.prototype.update = function(){
 
 	if (this.buttons_pressed["left"] == true){
 		this.link.move_left();
+		if (this.link.walking == false){
+			this.link.walking = true;
+			this.link.facing = "left";
+		}
 	}
 	if (this.buttons_pressed["right"] == true){
 		this.link.move_right();
+		if (this.link.walking == false){
+			this.link.walking = true;
+			this.link.facing = "right";
+		}
 	}
 	if (this.buttons_pressed["up"] == true){
 		this.link.move_up();
+		if (this.link.walking == false){
+			this.link.walking = true;
+			this.link.facing = "up";
+		}
 	}
 	if (this.buttons_pressed["down"] == true){
 		this.link.move_down();
+		if (this.link.walking == false){
+			this.link.walking = true;
+			this.link.facing = "down";
+		}
 	}
+
+	if (!(this.buttons_pressed["left"] || this.buttons_pressed["up"] || this.buttons_pressed["right"] || this.buttons_pressed["down"])){
+		this.link.walking = false;
+	}
+	// else{
+	// 	console.log("walking");
+	// 	switch(this.link.facing){
+	// 		case "up" :
+	// 			console.log("up");
+	// 			if (this.link.shield == true){
+	// 				console.log("with shield");
+	// 			}
+	// 			break;
+	// 		case "right":
+	// 			console.log("right");
+	// 			if (this.link.shield == true){
+	// 				console.log("with shield");
+	// 			}
+	// 			break;
+	// 		case "down":
+	// 			console.log("down");
+	// 			if (this.link.shield == true){
+	// 				console.log("with shield");
+	// 			}
+	// 			break;
+	// 		case "left":
+	// 			console.log("left");
+	// 			if (this.link.shield == true){
+	// 				console.log("with shield");
+	// 			}
+	// 	}
+	// }
+
+
 
 };
 
