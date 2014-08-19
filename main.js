@@ -48,6 +48,20 @@ function Link(sprite_arr){
 	this.tact = true;
 }
 
+Link.prototype.determine_movements = function(){
+	sh = {};
+	sh["up_rows"] = [3,7];
+	sh["right_rows"] = [2,6];
+	sh["down_rows"] = [0,4];
+	sh["left_rows"] = [1,5];
+
+	sh["walking"] = [0,1,2];
+	sh["walking_shield"] = [3,4,5];
+
+	this.sprite_helper = sh;
+
+};
+
 Link.prototype.draw = function(ctx) {
   // draw_sprite(ctx, this.img, this.x, this.y, 16);
   // this.sprite_arr[0].draw(ctx, this.x, this.y);
@@ -59,53 +73,93 @@ Link.prototype.draw = function(ctx) {
 };
 
 Link.prototype.draw_walking = function(ctx){
-	switch(this.facing){
-		case "up" :
-			console.log("up");
-			if (this.shield == true){
-				if (this.tact == true){
-					this.sprite_arr[37].draw(ctx, this.x, this.y);
-				}
-				else{
-					this.sprite_arr[38].draw(ctx, this.x, this.y);
-				}
-			} 
-			break;
-		case "right" : 
-			console.log("right");
-			if (this.shield == true){
-				if (this.tact == true){
-					this.sprite_arr[28].draw(ctx, this.x, this.y);
-				}
-				else{
-					this.sprite_arr[29].draw(ctx, this.x, this.y);
-				}
-			} 
-			break;
-		case "down" : 
-			console.log("down");
-			if (this.shield == true){
-				if (this.tact == true){
-					this.sprite_arr[4].draw(ctx, this.x, this.y);
-				}
-				else{
-					this.sprite_arr[5].draw(ctx, this.x, this.y);
-				}
-			} 
-			break;
-		case "left" : 
-			console.log("left");
-			if (this.shield == true){
-				if (this.tact == true){
-					this.sprite_arr[16].draw(ctx, this.x, this.y);
-				}
-				else{
-					this.sprite_arr[17].draw(ctx, this.x, this.y);
-				}
-			} 
-			break;
 
-	}
+	// switch(this.facing){
+	// 	case "up" :
+	// 		if (this.walking == true){
+	// 			if (this.shield == true){
+	// 				if (this.tact == true){
+	// 					this.sprite_arr[37].draw(ctx, this.x, this.y);
+	// 				}
+	// 				else{
+	// 					this.sprite_arr[38].draw(ctx, this.x, this.y);
+	// 				}
+	// 			}
+	// 		}
+	// 		else{
+	// 			if (this.shield == true){
+	// 				this.sprite_arr[39].draw(ctx, this.x, this.y);
+	// 			}
+	// 			else{
+	// 				this.sprite_arr[38].draw(ctx, this.x, this.y);
+	// 			}
+	// 		} 
+	// 		break;
+	// 	case "right" : 
+	// 		console.log("right");
+	// 		if (this.walking == true){
+	// 			if (this.shield == true){
+	// 				if (this.tact == true){
+	// 					this.sprite_arr[28].draw(ctx, this.x, this.y);
+	// 				}
+	// 				else{
+	// 					this.sprite_arr[29].draw(ctx, this.x, this.y);
+	// 				}
+	// 			} 
+	// 		}
+	// 		else{
+	// 			if (this.shield == true){
+	// 				this.sprite_arr[].draw(ctx, this.x, this.y);
+	// 			}
+	// 			else{
+
+	// 			}
+	// 		}
+	// 		break;
+	// 	case "down" : 
+	// 		console.log("down");
+	// 		if (this.walking == true){
+	// 			if (this.shield == true){
+	// 				if (this.tact == true){
+	// 					this.sprite_arr[4].draw(ctx, this.x, this.y);
+	// 				}
+	// 				else{
+	// 					this.sprite_arr[5].draw(ctx, this.x, this.y);
+	// 				}
+	// 			}
+	// 		}
+	// 		else{
+	// 			if (this.shield == true){
+	// 				this.sprite_arr[].draw(ctx, this.x, this.y);
+	// 			}
+	// 			else{
+
+	// 			}
+	// 		}
+
+	// 		break;
+	// 	case "left" : 
+	// 		console.log("left");
+	// 		if (this.walking == true){
+	// 			if (this.shield == true){
+	// 				if (this.tact == true){
+	// 					this.sprite_arr[16].draw(ctx, this.x, this.y);
+	// 				}
+	// 				else{
+	// 					this.sprite_arr[17].draw(ctx, this.x, this.y);
+	// 				}
+	// 			}
+	// 		} 
+	// 		else{
+	// 			if (this.shield == true){
+	// 				this.sprite_arr[].draw(ctx, this.x, this.y);
+	// 			}
+	// 			else{
+
+	// 			}
+	// 		}
+	// 		break;
+	// }
 
 };
 
