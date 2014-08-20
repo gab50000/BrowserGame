@@ -5,6 +5,7 @@ function draw(){
 	  var ctx = canvas.getContext('2d');
 	  var img = new Image();
 	  img.src = "images/la_link.png";
+	  // img.src = "images/la_link.png";
 	  var posx = 200;
 	  var posy = 200;
 
@@ -28,7 +29,7 @@ function create_sprite_array(img, sprite_width, sprite_height){
 	var i, j;
 	var sprite_arr = new Array(lines*columns);
 	for (i=0; i<lines; i++){
-		for (j=0; j<columns; j++){
+		for (var j=0; j<columns; j++){
 			sprite_arr[i*columns+j] = new Sprite(img, j*sprite_width, i*sprite_height, sprite_width, sprite_height);
 		}
 	}
@@ -38,95 +39,105 @@ function create_sprite_array(img, sprite_width, sprite_height){
 }
 
 function Link(sprite_arr){
-	this.states = ["shield", "defending", "jumping", "swimming", "walking", "standing"]
+	this.moves = {};
 	this.facing = "down";
+	this.walking = false;
 	this.x = 0;
 	this.y = 0;
 	this.sprite_arr = sprite_arr;
 	this.walking = false;
 	this.shield = true;
-	this.tact = true;
+	this.tact = 0;
+	this.assign_sprites(this.moves);
 }
 
-Link.prototype.draw = function(ctx) {
-  // draw_sprite(ctx, this.img, this.x, this.y, 16);
-  // this.sprite_arr[0].draw(ctx, this.x, this.y);
-  if (this.walking == true){
-  	this.draw_walking(ctx);
-  }
+Link.prototype.assign_sprites = function(moves){
 
+	moves["walk_down_free"]  = [0, [0,1,2]];
+	moves["walk_left_free"]  = [1, [0,1,2]];
+	moves["walk_right_free"] = [2, [0,1,2]];
+	moves["walk_up_free"]    = [3, [0,1,2]];
+
+	moves["stand_down_free"]  = [0,1];
+	moves["stand_left_free"]  = [1,1];
+	moves["stand_right_free"] = [2,1];
+	moves["stand_up_free"]    = [3,1];
 
 };
 
-Link.prototype.draw_walking = function(ctx){
-	switch(this.facing){
-		case "up" :
-			console.log("up");
-			if (this.shield == true){
-				if (this.tact == true){
-					this.sprite_arr[37].draw(ctx, this.x, this.y);
-				}
-				else{
-					this.sprite_arr[38].draw(ctx, this.x, this.y);
-				}
-			} 
-			break;
-		case "right" : 
-			console.log("right");
-			if (this.shield == true){
-				if (this.tact == true){
-					this.sprite_arr[28].draw(ctx, this.x, this.y);
-				}
-				else{
-					this.sprite_arr[29].draw(ctx, this.x, this.y);
-				}
-			} 
-			break;
-		case "down" : 
-			console.log("down");
-			if (this.shield == true){
-				if (this.tact == true){
-					this.sprite_arr[4].draw(ctx, this.x, this.y);
-				}
-				else{
-					this.sprite_arr[5].draw(ctx, this.x, this.y);
-				}
-			} 
-			break;
-		case "left" : 
-			console.log("left");
-			if (this.shield == true){
-				if (this.tact == true){
-					this.sprite_arr[16].draw(ctx, this.x, this.y);
-				}
-				else{
-					this.sprite_arr[17].draw(ctx, this.x, this.y);
-				}
-			} 
-			break;
+Link.prototype.draw = function(ctx){
+	var cols, line
 
+	if (this.walking == true){
+		// console.log("walking");
+		line = this.moves["walk_"+this.facing+"_free"][0];
+		cols = this.moves["walk_"+this.facing+"_free"][1];
+		this.sprite_arr[12*line+cols[this.tact]].draw(ctx, this.x, this.y);
+	}
+	else{
+		// console.log("standing");
+		line = this.moves["stand_"+this.facing+"_free"][0];
+		cols = this.moves["stand_"+this.facing+"_free"][1];
+		this.sprite_arr[12*line+cols].draw(ctx, this.x, this.y);		
+	}
+};
+
+Link.prototype.update = function(buttons_pressed){
+	if (buttons_pressed["left"] == true){
+		this.move_left();
+		if (this.walking == false){
+			this.walking = true;
+		}
+		this.facing = "left";
+	}
+	if (buttons_pressed["right"] == true){
+		this.move_right();
+		if (this.walking == false){
+			this.walking = true;
+		}
+		this.facing = "right";
+	}
+	if (buttons_pressed["up"] == true){
+		this.move_up();
+		if (this.walking == false){
+			this.walking = true;
+		}
+		this.facing = "up";
+	}
+	if (buttons_pressed["down"] == true){
+		this.move_down();
+		if (this.walking == false){
+			this.walking = true;
+		}
+		this.facing = "down";
 	}
 
+	if (!(buttons_pressed["left"] || buttons_pressed["up"] || buttons_pressed["right"] || buttons_pressed["down"])){
+		this.walking = false;
+	}
+
+  if (this.tact == 2){
+  	this.tact = 0;
+  }
+  else{
+  	this.tact += 1;
+  }
 };
 
 Link.prototype.move_left = function() {
   this.x -= 8;
-  this.tact = !this.tact;
 };
 
 Link.prototype.move_right = function() {
   this.x += 8;
-  this.tact = !this.tact;
 };
 
 Link.prototype.move_up = function() {
   this.y -= 8;
-  this.tact = !this.tact;
 };
 
 Link.prototype.move_down = function() {
   this.y += 8;
-  this.tact = !this.tact;
 };
 
 //constructor takes coordinate of upper left
@@ -146,7 +157,7 @@ Sprite.prototype.draw = function(ctx, dest_posx, dest_posy){
 function Game(img, ctx, width, height){
 	this.canvas_width = width;
 	this.canvas_height = height;
-	this.fps = 60;
+	this.fps = 30;
 	this.i = 0;
 	sprite_arr = create_sprite_array(img, 32, 32);
 	this.ctx = ctx;
@@ -190,71 +201,7 @@ Game.prototype.run = function(){
 };
 
 Game.prototype.update = function(){
-	// console.log(this.buttons_pressed);
-
-	if (this.buttons_pressed["left"] == true){
-		this.link.move_left();
-		if (this.link.walking == false){
-			this.link.walking = true;
-			this.link.facing = "left";
-		}
-	}
-	if (this.buttons_pressed["right"] == true){
-		this.link.move_right();
-		if (this.link.walking == false){
-			this.link.walking = true;
-			this.link.facing = "right";
-		}
-	}
-	if (this.buttons_pressed["up"] == true){
-		this.link.move_up();
-		if (this.link.walking == false){
-			this.link.walking = true;
-			this.link.facing = "up";
-		}
-	}
-	if (this.buttons_pressed["down"] == true){
-		this.link.move_down();
-		if (this.link.walking == false){
-			this.link.walking = true;
-			this.link.facing = "down";
-		}
-	}
-
-	if (!(this.buttons_pressed["left"] || this.buttons_pressed["up"] || this.buttons_pressed["right"] || this.buttons_pressed["down"])){
-		this.link.walking = false;
-	}
-	// else{
-	// 	console.log("walking");
-	// 	switch(this.link.facing){
-	// 		case "up" :
-	// 			console.log("up");
-	// 			if (this.link.shield == true){
-	// 				console.log("with shield");
-	// 			}
-	// 			break;
-	// 		case "right":
-	// 			console.log("right");
-	// 			if (this.link.shield == true){
-	// 				console.log("with shield");
-	// 			}
-	// 			break;
-	// 		case "down":
-	// 			console.log("down");
-	// 			if (this.link.shield == true){
-	// 				console.log("with shield");
-	// 			}
-	// 			break;
-	// 		case "left":
-	// 			console.log("left");
-	// 			if (this.link.shield == true){
-	// 				console.log("with shield");
-	// 			}
-	// 	}
-	// }
-
-
-
+	this.link.update(this.buttons_pressed);
 };
 
 Game.prototype.draw = function(){
